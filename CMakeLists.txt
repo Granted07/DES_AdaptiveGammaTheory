@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.16)
+project(adaptive_gamma C)
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+file(GLOB LIB_SOURCES CONFIGURE_DEPENDS src/*.c)
+add_library(agamma ${LIB_SOURCES})
+target_include_directories(agamma PUBLIC include)
+if(UNIX)
+  target_link_libraries(agamma PUBLIC m)
+endif()
+
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS tests/test_*.c)
+foreach(t ${TEST_SOURCES})
+  get_filename_component(name ${t} NAME_WE)
+  add_executable(${name} ${t})
+  target_link_libraries(${name} PRIVATE agamma)
+endforeach()
