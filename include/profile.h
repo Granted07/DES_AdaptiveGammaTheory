@@ -1,6 +1,6 @@
-#include <stddef.h>
 #ifndef PROFILE_H
 #define PROFILE_H
+#include <stddef.h>
 
 typedef struct {
   double v;  // extra cost per additional image; seconds/image

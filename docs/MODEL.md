@@ -28,8 +28,9 @@ The GPU returns a whole batch at once, and the time is linear in r:
 m_r = k·r + m₀
 ```
 
-Units to keep straight: `μ_r` counts *batches* per second, `throughput`
-counts *images* per second.
+Units to keep straight: 
+`μ_r` counts *batches* per second, 
+`throughput` counts *images* per second.
 
 Maximum sustainable arrival rate (images/s): `B·μ_B`.
 Traffic intensity: `ρ = λ / (B·μ_B)`, assumed ≤ 1.
