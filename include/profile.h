@@ -39,6 +39,6 @@ double memory_usage(const GPUProfile *, size_t); // m_r, MB
 double throughput(double mu_r, size_t);          // r * mu_r, images/s
 double max_arrival_rate(const GPUProfile *);     // B * mu_B, tasks/s
 double traffic_intensity(const GPUProfile *, double lambda); // rho
-int knee_batch(const GPUProfile *, double lambda); // b, in range [1, B]
+size_t knee_batch(const GPUProfile *, double lambda); // b, in range [1, B]
 
 #endif

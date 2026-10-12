@@ -4,16 +4,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 double service_time(const GPUProfile *gpuprofile, size_t r) {
-  return gpuprofile->v * r + gpuprofile->t0;
+  return gpuprofile->v * (double)r + gpuprofile->t0;
 }
 
 double service_rate(double t_r) { return 1 / t_r; }
 
 double memory_usage(const GPUProfile *gpuprofile, size_t r) {
-  return gpuprofile->k * r + gpuprofile->m0;
+  return gpuprofile->k * (double)r + gpuprofile->m0;
 }
 
-double throughput(double mu_r, size_t r) { return r * mu_r; }
+double throughput(double mu_r, size_t r) { return (double)r * mu_r; }
 
 double max_arrival_rate(const GPUProfile *gpuprofile) {
   if (!gpuprofile || gpuprofile->B < 1)
@@ -32,33 +32,27 @@ double traffic_intensity(const GPUProfile *gpuprofile, double lambda) {
   return lambda / lambda_max;
 }
 
-int knee_batch(const GPUProfile *gpuprofile, double lambda) {
+size_t knee_batch(const GPUProfile *gpuprofile, double lambda) {
   if (!gpuprofile || gpuprofile->B < 1 || lambda <= 0.0)
     return 1;
 
-  if (gpuprofile->v <= 0)
+  double denominator = 1.0 - lambda * gpuprofile->v;
+  if (gpuprofile->v <= 0 || denominator <= 0.0)
     return gpuprofile->B;
   if (lambda >= 1.0 / gpuprofile->v) {
     return gpuprofile->B;
   }
 
   // b = λ·τ₀ / (1 - λ·v)
-  double numerator = lambda * gpuprofile->t0;
-  double denominator = 1.0 - lambda * gpuprofile->v;
-
-  if (denominator <= 0.0)
-    return gpuprofile->B;
-
-  double b_float = numerator / denominator;
-  int b = (int)ceil(b_float);
+  int b = (int)ceil(lambda * gpuprofile->t0 / denominator);
 
   // Clamping to [1,B]
-  if (b < 1)
-    b = 1;
-  if (b > gpuprofile->B)
-    b = gpuprofile->B;
+  if (b < 1.0)
+    b = 1.0;
+  if (b > (int)gpuprofile->B)
+    b = (int)gpuprofile->B;
 
-  return b;
+  return (size_t)b;
 }
 
 Profiles *build(const GPUProfile *gpuprofile) {
